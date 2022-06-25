@@ -1,0 +1,35 @@
+﻿version: "3.8"
+
+services:
+  nats:
+    restart: unless-stopped
+    image: nats:latest
+    command: --jetstream -m 8222
+    networks:
+      - network
+
+  simulator:
+    restart: unless-stopped
+    build:
+      context: ..
+      dockerfile: ./simulator/docker/build.Dockerfile
+    environment:
+      NATS_URL: "nats://nats:4222"
+    depends_on:
+      - nats
+    networks:
+      - network
+
+  tests:
+    build:
+      context: ..
+      dockerfile: ./simulator-integration-tests/Dockerfile
+    environment:
+      NATS_URL: "nats://nats:4222"
+    depends_on:
+      - nats
+    networks:
+      - network
+
+networks:
+  network:

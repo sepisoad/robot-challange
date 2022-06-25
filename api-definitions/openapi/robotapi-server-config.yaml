@@ -1,0 +1,6 @@
+package: robotapiserver
+generate:
+  echo-server: true
+  models: true
+  embedded-spec: true
+output: robotapi-server/robot.gen.go

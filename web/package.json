@@ -1,0 +1,19 @@
+{
+  "name": "web",
+  "version": "0.0.1",
+  "description": "\"robots management ui\"",
+  "main": "src/index/js",
+  "author": "Sepehr Aryani",
+  "license": "MIT",
+  "dependencies": {
+    "elm": "^0.19.1-5"
+  },
+  "scripts": {
+    "dev": "vite --force"
+  },
+  "devDependencies": {
+    "vite": "^2.9.12",
+    "vite-plugin-elm": "^2.6.1",
+    "vite-plugin-singlefile": "^0.10.0-beta.2"
+  }
+}

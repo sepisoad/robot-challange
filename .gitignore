@@ -1,0 +1,30 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin
+
+# Test binary, build with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+reports
+*-packr.go
+node_modules
+.vscode
+playground
+
+
+service-account-key.json
+
+/web/.sublime/project.sublime-workspace
+/web/elm-stuff
+/web/node_modules
+
+.env
+.env.prod
+.env.dev
+

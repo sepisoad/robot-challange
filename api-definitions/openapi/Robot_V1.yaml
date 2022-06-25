@@ -1,0 +1,269 @@
+openapi: 3.0.3
+info:
+  title: Robot API
+  version: 0.0.1
+tags:
+  - name: Robot
+    description: Robot API Spec
+
+paths:
+  /:
+    get:
+      operationId: dashboard
+      summary: Returns a web dashboard
+
+      responses:
+        200:
+          description: Returns a web dashboard
+
+  /ws/robots:
+    get:
+      operationId: robotsWebsocket
+      summary: Returns a websocket that streams the robots status
+
+      responses:
+        200:
+          description: Creates websocket
+        500:
+          description: Internal Server Error
+  /ws/tasks:
+    get:
+      operationId: tasksWebsocket
+      summary: Returns a websocket streams the current running tasks
+
+      responses:
+        200:
+          description: Creates websocket
+        500:
+          description: Internal Server Error
+
+  /api/robots:
+    get:
+      operationId: getAllRobots
+      summary: Return the list of all robots with their current status
+
+      responses:
+        200:
+          description: Robots details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/robot"
+
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  /api/robots/{robotId}:
+    get:
+      operationId: getRobot
+      summary: Get robot
+      parameters:
+        - $ref: "#/components/parameters/robotId"
+
+      responses:
+        200:
+          description: Robot details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/robot"
+
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+    put:
+      operationId: moveRobot
+      summary: Move robot
+      parameters:
+        - $ref: "#/components/parameters/robotId"
+
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/moveRobotRequest"
+
+      responses:
+        202:
+          description: Move Robot Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/moveRobotResponse"
+
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  /api/tasks:
+    get:
+      operationId: getAllTasks
+      summary: Get all tasks
+
+      responses:
+        200:
+          description: Tasks details
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/task"
+
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+  /api/tasks/{taskId}:
+    get:
+      operationId: getTask
+      summary: Get task
+      parameters:
+        - $ref: "#/components/parameters/taskId"
+
+      responses:
+        200:
+          description: Task details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/task"
+
+        404:
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+    delete:
+      operationId: cancelTask
+      summary: Cancel task
+      parameters:
+        - $ref: "#/components/parameters/taskId"
+
+      responses:
+        204:
+          description: No content
+
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/error"
+
+components:
+  parameters:
+    robotId:
+      name: robotId
+      in: path
+      description: The robot unique identifier
+      required: true
+      schema:
+        type: integer
+
+    taskId:
+      name: taskId
+      in: path
+      description: The task unique identifier
+      required: true
+      schema:
+        type: integer
+
+  schemas:
+    error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          description: Error code
+        message:
+          type: string
+          description: Error message
+
+    robot:
+      type: object
+      required:
+        - id
+        - "xPosition"
+        - "yPosition"
+      properties:
+        id:
+          type: integer
+        xPosition:
+          type: integer
+        yPosition:
+          type: integer
+
+    moveRobotRequest:
+      type: object
+      required:
+        - moveSequences
+      properties:
+        moveSequences:
+          type: array
+          items:
+            type: string
+            enum: ["N", "S", "E", "W"]
+
+    moveRobotResponse:
+      type: object
+      required:
+        - task
+      properties:
+        task:
+          $ref: "#/components/schemas/task"
+
+    task:
+      type: object
+      required:
+        - id
+        - status
+      properties:
+        id:
+          type: integer
+        status:
+          type: string
+          enum: ["CREATED", "INPROGRESS", "COMPLETED", "CANCELLED"]
